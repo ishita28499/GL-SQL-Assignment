@@ -1,0 +1,68 @@
+select * from Customers;
+
+select userID,smoker,drink_level,interest
+from customer;
+
+-- 2 
+select name, city, price 
+from Restaurant;
+
+--
+
+select name, city, price 
+from Restaurant
+order by city desc;
+
+select userID,interest,height
+from Customers
+order by height;
+
+-- 3 SQLite WHERE
+
+select name,address,city,alcohol
+from Restaurant
+where price="low";
+
+--
+
+SELECT userID, interest, activity, marital_status
+from Customers
+where smoker="NO" and height>1.8;
+
+-- SQLite BETWEEN
+
+select userID,interest,ambience
+from Customers
+where height BETWEEN 1.7 and 1.8
+order by height;
+
+--
+
+select userID,placeID,rating
+from rating
+where rating not BETWEEN 1 and 2
+order by rating;
+
+-- 5 SQLite Like Operator 
+
+select placeID,name,Rambience
+from Restaurant
+where Rambience like "%quiet%";
+
+-- 6 SQLite INNEER JOIN
+
+SELECT userID,address
+from rating INNER JOIN Restaurant on rating.placeID = Restaurant.placeID;
+
+-- 7 SQLite Group by
+
+select smoking_area,count(name)
+from Restaurant
+GROUP by smoking_area;
+
+--
+
+
+select price,count(name)
+from Restaurant
+GROUP by price;

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/ISHITA/Desktop/Great Learning/auto_insurance_GL_assessment.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="2584"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,19:mainauto_insurance_risk"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="auto_insurance_risk" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="68"/><column index="2" value="96"/><column index="3" value="211"/><column index="4" value="61"/><column index="5" value="115"/><column index="6" value="90"/><column index="7" value="93"/><column index="8" value="133"/><column index="9" value="112"/><column index="10" value="88"/><column index="11" value="88"/><column index="12" value="83"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">
+/*A1*/
+SELECT
+sum(case when CLaimNb &gt; 0 then 1 else 0 end) as total_claimed,count(IDpol) as total_customer,
+sum(case when CLaimNb &gt; 0 then 1 else 0 end)/count(IDpol) as per_claimed FROM auto_insurance_risk;
+
+/*A2.1*/
+/*ALTER TABLE auto_insurance_risk ADD claim_flag integer;*/
+
+/*A2.2*/
+UPDATE auto_insurance_risk
+SET claim_flag = case when CLaimNb &gt; 0 then 1 else 0 end;
+
+/*A3.1*/
+SELECT avg(Exposure) FROM Auto_insurance_risk WHERE ClaimNb &gt; 0;
+
+/*A4.1*/
+SELECT
+case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end as exposure_bkt,sum(ClaimNb) as num_claims,count(IDpol) as num_pol,((sum(ClaimNb)*100.0)/count(IDpol)) as pct_claim FROM auto_insurance_risk
+GROUP BY case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end;
+	
+/*A5*/
+SELECT Area,avg(ClaimNb) as avgerage_claims FROM auto_insurance_risk GROUP BY Area;
+
+/*A6*/
+SELECT Area,case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end as exposure_bkt,sum(ClaimNb) as num_claims,count(IDpol) as num_pol,((sum(ClaimNb)*100.0)/count(IDpol)) as pct_claim FROM auto_insurance_risk
+GROUP BY Area,case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end
+ORDER BY ((sum(ClaimNb)*100.0)/count(IDpol)) DESC;
+
+/*A7.1*/
+SELECT avg(VehAge) FROM Auto_insurance_risk WHERE ClaimNb &gt; 0 UNION SELECT avg(VehAge) FROM Auto_insurance_risk WHERE ClaimNb = 0 ;
+
+/*A7.2*/
+SELECT avg(VehAge), Area FROM Auto_insurance_risk WHERE ClaimNb &gt; 0 GROUP BY Area ; 
+
+/*A8*/
+SELECT case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end as exposure_bkt,claim_flag,avg(VehAge) FROM auto_insurance_risk GROUP BY case when exposure &lt;= 0.25 then 'E1' 
+when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4' end,claim_flag;
+
+/*A9.1*/
+SELECT case when ClaimNb = 0 then 'No Claims' when ClaimNb = 1 then '1 Claim' when ClaimNb &gt; 1 then 'MT 1 Claims' end as Claim_Ct,avg(BonusMalus) FROM   auto_insurance_risk
+GROUP BY case when ClaimNb = 0 then 'No Claims' when ClaimNb = 1 then '1 Claim' when ClaimNb &gt; 1 then 'MT 1 Claims' end;
+
+/*A10*/
+SELECT case when ClaimNb = 0 then 'No Claims' when ClaimNb = 1 then '1 Claim' when ClaimNb &gt; 1 then 'MT 1 Claims'
+end as Claim_Ct,avg(Density) FROM auto_insurance_risk GROUP BY case when ClaimNb = 0 then 'No Claims' 
+when ClaimNb = 1 then '1 Claim' when ClaimNb &gt; 1 then 'MT 1 Claims'
+end;
+
+/*A11*/
+SELECT VehGas,VehBrand,(avg(ClaimNb)*100.0)FROM auto_insurance_risk GROUP BY VehGas,VehBrand ORDER BY (avg(ClaimNb)*100.0) DESC Limit 1;
+
+/*A12*/
+SELECT case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end as exposure_bkt,Region,sum(claim_flag) as claim_cnt,count(IDPol) as policy_cnt,((sum(claim_flag)*100.0)/count(IDPol)) as claim_rate FROM auto_insurance_risk
+GROUP BY case when exposure &lt;= 0.25 then 'E1' when exposure &lt;= 0.50 then 'E2' when exposure &lt;= 0.75 then 'E3' else 'E4'
+end,Region ORDER BY ((sum(claim_flag)*100.0)/count(IDPol)) DESC Limit 5;
+
+/*A13*/
+SELECT case when DrivAge = 18 then '1-Beginner' when DrivAge &lt;= 30 then '2-Junior' when DrivAge &lt;= 45 then '3-Middle Age' 
+when DrivAge &lt;= 60 then '4-Mid-Senior' else '5-Senior' end as age_group,avg(BonusMalus) as avg_bonusmalus 
+FROM auto_insurance_risk GROUP BY case when DrivAge = 18 then '1-Beginner' when DrivAge &lt;= 30 then '2-Junior' when DrivAge &lt;= 45 then '3-Middle Age' 
+when DrivAge &lt;= 60 then '4-Mid-Senior' else '5-Senior'
+end;
+
+
+
+
+
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>

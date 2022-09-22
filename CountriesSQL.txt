@@ -1,0 +1,6 @@
+SELECT LifeExp.country, LifeExp.LifeExpectancy, population.area, population.popdensity, population.population, epi.EPI, dengue.DengueCases, BirthRate.BirthRate, gdp.GDP FROM LifeExp
+LEFT JOIN population ON LifeExp.country= population.country
+LEFT JOIN epi ON LifeExp.country=epi.country
+LEFT JOIN dengue ON LifeExp.country= dengue.country
+LEFT JOIN BirthRate ON LifeExp.country= BirthRate.country
+LEFT JOIN gdp ON LifeExp.country= gdp.contry;

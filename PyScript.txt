@@ -1,0 +1,36 @@
+import pandas as pd
+from sqlalchemy import create_engine
+engine=create_engine('sqlite:///C:\\Users\\Vinit Thakur\\Desktop\\chinook.db')
+table_names=engine.table_names()
+print(table_names)
+
+con=engine.connect()
+rs=con.execute("SELECT * FROM employees")
+df=pd.DataFrame(rs.fetchall())
+con.close()
+print(df.head())
+
+rs1=con.execute("SELECT LastName, Title FROM employees")
+df1=pd.DataFrame(rs1.fetchall())
+df1.columns=rs1.keys()
+print(len(df1))
+print(df.head())
+
+rs2=con.execute("SELECT * FROM employees WHERE EmployeeID>=6")
+df2=pd.DataFrame(rs2.fetchall())
+df2.columns=rs2.keys()
+
+rs3=con.execute("SELECT * FROM employees ORDER BY BirthDate")
+df3=pd.DataFrame(rs3.fetchall())
+df3.columns= rs3.keys()
+print(df3.head())
+
+df4=pd.read_sql_query("SELECT * FROM Albums",engine)
+
+rs4=con.execute("SELECT Title, Name FROM Albums INNER JOIN Artists on Albums.ArtistID=Artists.ArtistID")
+df4=pd.DataFrame(rs4.fetchall())
+df4.columns=rs4.keys()
+df4.head()
+
+df5=pd.read_sql_query("SELECT * FROM playlist_track INNER JOIN Tracks on playlist_track.TrackID = Tracks.TrackID WHERE Milliseconds<250000", engine)
+df5.head()
